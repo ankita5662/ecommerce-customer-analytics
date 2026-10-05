@@ -9,3 +9,4 @@ All 8 tables loaded with the expected row counts (for example, 99,441 orders and
 - Some orders have more than one review record (up to 3). Kept the latest answered review per order in the view order_reviews_clean (98,672 orders have a review).
 - About 769 orders have no review.
 - Only delivered orders (96,478 of 99,441) are counted as completed sales. Canceled, unavailable and in-progress orders are excluded from revenue.
+- Each order has its own customer_id, so real people are counted with customer_unique_id: 96,096 unique people for 99,441 orders. Only about 3,345 orders came from returning customers, so retention is low in this dataset.
