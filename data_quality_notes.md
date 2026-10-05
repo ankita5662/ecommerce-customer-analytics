@@ -10,3 +10,4 @@ All 8 tables loaded with the expected row counts (for example, 99,441 orders and
 - About 769 orders have no review.
 - Only delivered orders (96,478 of 99,441) are counted as completed sales. Canceled, unavailable and in-progress orders are excluded from revenue.
 - Each order has its own customer_id, so real people are counted with customer_unique_id: 96,096 unique people for 99,441 orders. Only about 3,345 orders came from returning customers, so retention is low in this dataset.
+- 775 orders have no items (mostly canceled or unavailable orders) and 1 order has no payment record. These orders carry no revenue, and they are excluded by counting delivered orders only.
