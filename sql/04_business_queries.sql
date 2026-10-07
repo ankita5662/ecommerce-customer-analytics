@@ -46,4 +46,8 @@ LEFT JOIN orders o ON order_reviews_clean.order_id = o.order_id
 GROUP BY o.order_status ORDER BY avg_review DESC;
 -- Q5. find the average number of days from purchase to delivery, for delivered orders only.
 -- Findings:
---
+-- Average days from purchase to delivery takes about 12.5 days/ roughly 2 weeks to reach cutsomers (delivered orders only)
+SELECT AVG(DATEDIFF(order_delivered_customer_date, order_purchase_timestamp))
+FROM orders o 
+WHERE order_status = 'delivered' 
+AND order_delivered_customer_date IS NOT NULL;
