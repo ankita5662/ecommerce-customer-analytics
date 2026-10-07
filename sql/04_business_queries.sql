@@ -28,7 +28,7 @@ JOIN order_payments p ON o.order_id = p.order_id
 WHERE o.order_status = 'delivered'
 GROUP BY month
 ORDER BY month;
-
+-- Q3. show the top 5 states by number of delivered orders.
 -- Top 5 states by delivered orders: 77% of the total, SP about 42%.
 SELECT c.customer_state AS Top_states , COUNT(DISTINCT o.order_id) AS Top_orders
 FROM customers c INNER JOIN orders o ON c.customer_id = o.customer_id
