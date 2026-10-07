@@ -36,3 +36,14 @@ FROM customers c INNER JOIN orders o ON c.customer_id = o.customer_id
 WHERE order_status = 'delivered'
 GROUP BY customer_state
 ORDER BY Top_orders DESC LIMIT 5;
+-- Q4. find the average review score for each order status.
+-- Findings:
+---Delivered orders make up 97% of reviews and average 4.16 stars, while every other status averages 2.0 or below. 
+---The small group of orders that don't complete is where the unhappy customers are.
+SELECT AVG(review_score) AS avg_review , o.order_status, COUNT(*) AS reviews
+FROM order_reviews_clean
+LEFT JOIN orders o ON order_reviews_clean.order_id = o.order_id
+GROUP BY o.order_status ORDER BY avg_review DESC;
+-- Q5. find the average number of days from purchase to delivery, for delivered orders only.
+-- Findings:
+--
