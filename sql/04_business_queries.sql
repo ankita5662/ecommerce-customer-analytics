@@ -51,3 +51,11 @@ SELECT AVG(DATEDIFF(order_delivered_customer_date, order_purchase_timestamp))
 FROM orders o 
 WHERE order_status = 'delivered' 
 AND order_delivered_customer_date IS NOT NULL;
+--Q6. How many delivered orders arrived later than the estimated delivery date?
+-- Findings:
+--- 6534 Delivered orders arrived after the estimated date (day-level comparison).
+SELECT COUNT(*) AS late_orders
+FROM orders o
+WHERE DATE(order_estimated_delivery_date) < DATE(order_delivered_customer_date) 
+AND order_status = 'delivered' 
+AND order_delivered_customer_date IS NOT NULL;
