@@ -115,3 +115,20 @@ WHERE o.order_status = 'delivered'
 GROUP BY category
 ORDER BY revenue DESC
 LIMIT 10;
+-- Q11. How many customers placed more than one delivered order?
+-- Result: 2,801 repeat customers.
+SELECT COUNT(*) AS repeat_customers
+FROM (
+  SELECT c.customer_unique_id
+  FROM customers c
+  JOIN orders o ON o.customer_id = c.customer_id
+  WHERE o.order_status = 'delivered'
+  GROUP BY c.customer_unique_id
+  HAVING COUNT(DISTINCT o.order_id) > 1
+) AS repeat_list;
+-- Q12. How many unique customers have at least one delivered order?
+-- Result: 93,358. Repeat share = 2,801 / 93,358 = about 3.0%.
+SELECT COUNT(DISTINCT c.customer_unique_id) AS total_customers
+FROM customers c
+JOIN orders o ON o.customer_id = c.customer_id
+WHERE o.order_status = 'delivered';
