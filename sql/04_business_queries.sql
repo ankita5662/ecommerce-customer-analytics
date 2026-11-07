@@ -59,3 +59,44 @@ FROM orders o
 WHERE DATE(order_estimated_delivery_date) < DATE(order_delivered_customer_date) 
 AND order_status = 'delivered' 
 AND order_delivered_customer_date IS NOT NULL;
+-- Q7. Do late deliveries get lower review scores?
+-- Result: on time 4.29 stars (89,442 reviews), late 2.27 stars (6,381 reviews).
+-- Late orders (about 7% of reviewed orders) score roughly 2 stars lower.
+SELECT CASE WHEN DATE(o.order_estimated_delivery_date) < DATE(o.order_delivered_customer_date)
+            THEN 'late' ELSE 'on time' END AS delivery_status,
+       ROUND(AVG(r.review_score), 2) AS avg_score,
+       COUNT(*) AS reviews
+FROM orders o
+JOIN order_reviews_clean r ON o.order_id = r.order_id
+WHERE o.order_status = 'delivered'
+  AND o.order_delivered_customer_date IS NOT NULL
+GROUP BY delivery_status;
+
+-- Q8. Which 5 states have the most late deliveries (count)?
+-- Result: SP 1,820 | RJ 1,495 | MG 519 | BA 396 | RS 325
+-- SP tops the list mainly because it has the most orders (see Q9 for rates).
+SELECT customer_state AS state,
+       COUNT(DISTINCT o.order_id) AS late_orders
+FROM customers c INNER JOIN orders o ON c.customer_id = o.customer_id
+WHERE DATE(o.order_estimated_delivery_date) < DATE(o.order_delivered_customer_date)
+  AND o.order_status = 'delivered'
+  AND o.order_delivered_customer_date IS NOT NULL
+GROUP BY customer_state
+ORDER BY late_orders DESC
+LIMIT 5;
+
+-- Q9. Which states have the highest late-delivery rate (states with 500+ delivered orders)?
+-- Highest: MA 17.43% (717 orders), CE 13.76%, BA 12.16%, RJ 12.11% (12,350 orders).
+-- RJ has far more late orders in total than MA, even though MA's rate is higher.
+SELECT c.customer_state AS state,
+       ROUND(100 * AVG(CASE WHEN DATE(o.order_estimated_delivery_date) < DATE(o.order_delivered_customer_date)
+                            THEN 1 ELSE 0 END), 2) AS late_pct,
+       COUNT(*) AS orders
+FROM customers c INNER JOIN orders o ON c.customer_id = o.customer_id
+WHERE o.order_status = 'delivered'
+  AND o.order_delivered_customer_date IS NOT NULL
+GROUP BY state
+HAVING COUNT(*) >= 500
+ORDER BY late_pct DESC
+LIMIT 10;
+
