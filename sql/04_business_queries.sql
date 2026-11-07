@@ -99,4 +99,19 @@ GROUP BY state
 HAVING COUNT(*) >= 500
 ORDER BY late_pct DESC
 LIMIT 10;
-
+-- Q10. Which product categories earn the most revenue (delivered orders)?
+-- Revenue = sum of item prices (excludes shipping), so it differs from the payment-based total in Q1.
+-- Top 3: health_beauty 1.23M, watches_gifts 1.17M, bed_bath_table 1.02M (reais).
+-- bed_bath_table has the most orders (9,272) but ranks 3rd in revenue.
+-- Note: products with no category or no English translation drop out of the joins.
+SELECT t.product_category_name_english AS category,
+       ROUND(SUM(oi.price), 2) AS revenue,
+       COUNT(DISTINCT oi.order_id) AS orders
+FROM order_items oi
+JOIN orders o ON oi.order_id = o.order_id
+JOIN products pr ON oi.product_id = pr.product_id
+JOIN product_category_translation t ON pr.product_category_name = t.product_category_name
+WHERE o.order_status = 'delivered'
+GROUP BY category
+ORDER BY revenue DESC
+LIMIT 10;
